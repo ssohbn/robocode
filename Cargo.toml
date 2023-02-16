@@ -1,0 +1,13 @@
+[package]
+name = "template"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.1.4", features = ["derive"] }
+ev3dev-lang-rust = "0.12.0"
+uom = "0.34.0"
+
+[profile.release]
+lto = true
+strip = "debuginfo"
