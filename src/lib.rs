@@ -38,6 +38,7 @@ pub fn move_distance(
 	Ok(())
 }
 
+/// turn whaever amount of degrees and direction
 pub fn turn(wheel: (&LargeMotor, &LargeMotor), gyro: GyroSensor, angle: u16, direction: Direction) -> Ev3Result<()> {
     let wheel_speed = 20;
     let sign = match direction {
