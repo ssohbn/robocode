@@ -9,7 +9,7 @@ use uom::si::f32::Length;
 use uom::si::length::meter;
 use uom::si::length::{centimeter, inch, foot};
 
-use template::{move_distance, turn, Direction};
+use robocode::{move_distance, turn, Direction};
 
 use std::thread;
 use std::time::Duration;
