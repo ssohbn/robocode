@@ -4,7 +4,7 @@ use ev3dev_lang_rust::{motors::LargeMotor, Ev3Result};
 use uom::si::f32::Length;
 use uom::si::length::meter;
 
-
+/// direction for turn thingy to go in
 pub enum Direction {
     LEFT,
     RIGHT,
