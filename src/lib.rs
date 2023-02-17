@@ -66,6 +66,30 @@ pub fn turn(wheels: (&LargeMotor, &LargeMotor), gyro: &GyroSensor, angle: u16, d
 	Ok(())
 }
 
+pub fn turn_until<C>(wheels: (&LargeMotor, &LargeMotor),  direction: Direction, condition: C) -> Ev3Result<()>
+    where C: Fn() -> bool {
+
+	let (motor_left, motor_right) = wheels;
+
+	let sign = match direction {
+        Direction::LEFT => -1,
+        Direction::RIGHT => 1,
+    };
+
+    motor_left.set_duty_cycle_sp(WHEEL_SPEED * sign)?;
+    motor_right.set_duty_cycle_sp(-WHEEL_SPEED * sign)?;
+
+	motor_left.run_direct()?;
+	motor_right.run_direct()?;
+
+	while condition() {}
+	motor_left.stop()?;
+	motor_right.stop()?;
+
+	Ok(())
+
+}
+
 pub fn get_obstacle_distance(
 	sensor: &UltrasonicSensor
 ) -> Ev3Result<Length> {

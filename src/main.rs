@@ -5,7 +5,7 @@ use ev3dev_lang_rust::sensors::{GyroSensor, UltrasonicSensor};
 use ev3dev_lang_rust::Ev3Result;
 use uom::si::f32::Length;
 use uom::si::length::{centimeter, meter};
-use robocode::{Direction, get_obstacle_distance, move_distance, turn};
+use robocode::{Direction, get_obstacle_distance, move_distance, turn, turn_until};
 
 fn main() -> Ev3Result<()> {
     let wheels = (&LargeMotor::get(MotorPort::OutB)?, &LargeMotor::get(MotorPort::OutC)?);
@@ -16,11 +16,13 @@ fn main() -> Ev3Result<()> {
 
     loop {
         //Keep turning 5 degrees left while there is something <5 cm away. 
-        while get_obstacle_distance(&ultrasonic_sensor)? < Length::new::<centimeter>(5.0) {
-            turn(wheels, gyro_sensor, 5, Direction::LEFT);
-        }
+        //while get_obstacle_distance(&ultrasonic_sensor)? < Length::new::<centimeter>(5.0) {
+        //    turn(wheels, gyro_sensor, 5, Direction::LEFT);
+        //}
+        turn_until(wheels, Direction::LEFT, || {get_obstacle_distance(&ultrasonic_sensor).unwrap() < Length::new::<centimeter>(5.0)})?;
+
         //Continuously move forward by 1cm while there is nothing in the way.
-        move_distance(wheels, Length::new::<meter>(0.02667), Length::new::<centimeter>(1.0));
+        move_distance(wheels, Length::new::<meter>(0.02667), Length::new::<centimeter>(1.0))?;
     }
 
 	Ok(())
