@@ -15,14 +15,12 @@ fn main() -> Ev3Result<()> {
     let ultrasonic_sensor = &UltrasonicSensor::find()?;
 
     loop {
-        println!("Moving forward");
-        move_distance(wheels, Length::new::<meter>(0.02667), Length::new::<centimeter>(1.0));
-        let distance = get_obstacle_distance(&ultrasonic_sensor)?;
-        println!("Distance: {}", distance.get::<centimeter>());
-        if distance < Length::new::<centimeter>(5.0) {
-            println!("Obstacle detected");
-            turn(wheels, gyro_sensor, 180, Direction::LEFT);
+        //Keep turning 5 degrees left while there is something <5 cm away. 
+        while get_obstacle_distance(&ultrasonic_sensor)? < Length::new::<centimeter>(5.0) {
+            turn(wheels, gyro_sensor, 5, Direction::LEFT);
         }
+        //Continuously move forward by 1cm while there is nothing in the way.
+        move_distance(wheels, Length::new::<meter>(0.02667), Length::new::<centimeter>(1.0));
     }
 
 	Ok(())
