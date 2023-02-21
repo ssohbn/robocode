@@ -95,7 +95,7 @@ impl Bot{
 				let rotations =
 					distance.get::<meter>() / (2.0 * std::f32::consts::PI * self.wheels.radius.get::<meter>());
 				let tachys = rotations * left.get_count_per_rot()? as f32;
-				Ok(left.get_position()? >= tachys as i32 || right.get_position()? >= tachys as i32)
+				Ok(left.get_position()?.abs() >= tachys as i32 || right.get_position()?.abs() >= tachys as i32)
 			},
 		)
 	}

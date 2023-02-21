@@ -28,9 +28,6 @@ fn main() -> Ev3Result<()> {
         running: running.clone(),
     };
 
-    sound::set_volume(100)?;
-    sound::play("/home/robot/Music/hey_marc.wav")?;
-
     let move_options = MoveOptions {
         forward: true,
         speed: 60,
