@@ -7,6 +7,7 @@ edition = "2021"
 clap = { version = "4.1.4", features = ["derive"] }
 ctrlc = { version = "3.2.5" }
 ev3dev-lang-rust = "0.12.0"
+tokio = { version = "1.25.0", features = ["full"] }
 uom = "0.34.0"
 
 [profile.release]

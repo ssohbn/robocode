@@ -1,5 +1,6 @@
 use ev3dev_lang_rust::sensors::{GyroSensor, UltrasonicSensor};
 use ev3dev_lang_rust::{motors::LargeMotor, Ev3Result, Ev3Error};
+use ev3dev_lang_rust::motors::MediumMotor;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use uom::si::f32::Length;
@@ -28,7 +29,8 @@ pub struct Wheels{
 
 pub struct Bot{
 	pub wheels: Wheels,
-	pub gyro: GyroSensor,
+	pub gyro: Option<GyroSensor>,
+    pub medium: Option<MediumMotor>,
 	pub ultrasonic: Option<UltrasonicSensor>,
 	pub running: Arc<AtomicBool>,
 }
@@ -122,12 +124,18 @@ impl Bot{
 
 	//Turns the robot by the given angle in degrees.
 	pub fn turn_angle(&self, options: &TurnOptions, angle: u16) -> Ev3Result<()> {
-		self.gyro.set_mode_gyro_ang()?;
-		let initial_angle = self.gyro.get_angle()?;
+        if self.gyro.is_none() {
+            return Err(Ev3Error::NotConnected { device: "gyro not connceted!".to_owned(), port: None});
+        }
+
+        let gyro = self.gyro.as_ref().unwrap();
+
+		gyro.set_mode_gyro_ang()?;
+		let initial_angle = gyro.get_angle()?;
 		self.turn_until(
 			options,
 			|| {
-				Ok(self.gyro.get_angle()? - initial_angle >= angle as i32)
+				Ok(gyro.get_angle()? - initial_angle >= angle as i32)
 			},
 		)
 	}
