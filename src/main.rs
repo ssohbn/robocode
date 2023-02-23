@@ -6,7 +6,7 @@ use ev3dev_lang_rust::sensors::{GyroSensor, UltrasonicSensor};
 use ev3dev_lang_rust::sound;
 use ev3dev_lang_rust::Ev3Result;
 use uom::si::f32::Length;
-use uom::si::length::{centimeter, meter};
+use uom::si::length::{centimeter, meter, inch};
 use robocode::{Bot, Direction, MoveOptions, TurnOptions, Wheels};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
