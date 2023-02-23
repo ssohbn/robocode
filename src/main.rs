@@ -3,12 +3,11 @@ extern crate ev3dev_lang_rust;
 use tokio;
 use ctrlc;
 use ev3dev_lang_rust::motors::{LargeMotor, MotorPort, MediumMotor};
-use ev3dev_lang_rust::sensors::{GyroSensor, UltrasonicSensor};
-use ev3dev_lang_rust::sound;
+use ev3dev_lang_rust::sensors::GyroSensor;
 use ev3dev_lang_rust::Ev3Result;
 use uom::si::f32::Length;
-use uom::si::length::{centimeter, meter, inch};
-use robocode::{Bot, Direction, MoveOptions, TurnOptions, Wheels};
+use uom::si::length::{meter, inch};
+use robocode::{Bot, MoveOptions, Wheels};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
@@ -18,7 +17,7 @@ async fn main() -> Ev3Result<()> {
     let r = running.clone();
     ctrlc::set_handler(move || {
         r.store(false, Ordering::SeqCst);
-    });
+    }).unwrap();
 
     let bot = Bot {
         wheels: Wheels {
@@ -35,12 +34,30 @@ async fn main() -> Ev3Result<()> {
         forward: true,
         speed: 60,
     };
-    let back_options = MoveOptions {
-        forward: false,
-        speed: 40,
-    };
+
+    let motor = MediumMotor::find()?;
+    tokio::spawn(async move {
+        loop {
+            griddy(&motor).unwrap();
+        }
+
+    });
 
     bot.move_distance(&move_options, Length::new::<inch>(18.0))?;
     bot.stop_movement()?;
+    Ok(())
+}
+
+fn griddy(motor: &MediumMotor) -> Ev3Result<()> {
+    motor.set_duty_cycle_sp(100)?;
+    motor.run_direct()?;
+
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
+    motor.set_duty_cycle_sp(-100)?;
+    motor.run_direct()?;
+
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
     Ok(())
 }
