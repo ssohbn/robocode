@@ -1,5 +1,5 @@
 use ev3dev_lang_rust::sensors::{GyroSensor, UltrasonicSensor};
-use ev3dev_lang_rust::{motors::LargeMotor, Ev3Result};
+use ev3dev_lang_rust::{motors::LargeMotor, Ev3Result, Ev3Error};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use uom::si::f32::Length;
@@ -29,7 +29,7 @@ pub struct Wheels{
 pub struct Bot{
 	pub wheels: Wheels,
 	pub gyro: GyroSensor,
-	pub ultrasonic: UltrasonicSensor,
+	pub ultrasonic: Option<UltrasonicSensor>,
 	pub running: Arc<AtomicBool>,
 }
 
@@ -142,6 +142,9 @@ impl Bot{
 
 	//Get the distance from the obstacle in front of the robot.
 	pub fn get_distance_from_obstacle(&self) -> Ev3Result<Length> {
-		Ok(Length::new::<centimeter>(self.ultrasonic.get_distance_centimeters()?))
+		if let Some(ultrasonic) = &self.ultrasonic {
+			return Ok(Length::new::<centimeter>(ultrasonic.get_distance_centimeters()?));
+		}
+		Err(Ev3Error::NotConnected{device: "Ultrasonic Sensor".to_string(), port: None})
 	}
 }

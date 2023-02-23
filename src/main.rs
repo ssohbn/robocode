@@ -24,7 +24,7 @@ fn main() -> Ev3Result<()> {
             radius: Length::new::<meter>(0.02667)
         },
         gyro: GyroSensor::find()?,
-        ultrasonic: UltrasonicSensor::find()?,
+        ultrasonic: None,
         running: running.clone(),
     };
 
@@ -36,20 +36,7 @@ fn main() -> Ev3Result<()> {
         forward: false,
         speed: 40,
     };
-    let turn_options = TurnOptions {
-        speed: 60,
-        direction: Direction::LEFT,
-    };
-    while running.load(Ordering::SeqCst) {
-        bot.turn_until(&turn_options, || {
-            Ok(bot.get_distance_from_obstacle()? > Length::new::<centimeter>(10.0))
-        })?;
-        bot.move_distance(&back_options, Length::new::<centimeter>(20.0))?;
-        bot.move_until(&move_options, || {
-            Ok(bot.get_distance_from_obstacle()? <= Length::new::<centimeter>(10.0))
-        })?;
-    }
-
+    bot.move_distance(&move_options, Length::new::<inch>(18.0))?;
     bot.stop_movement()?;
     Ok(())
 }
