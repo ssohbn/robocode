@@ -121,13 +121,13 @@ impl Bot{
 	}
 
 	//Turns the robot by the given angle in degrees.
-	pub fn turn_angle(&self, options: &TurnOptions, angle: u16) -> Ev3Result<()> {
+	pub fn turn_angle(&self, options: &TurnOptions, angle: i32) -> Ev3Result<()> {
 		self.gyro.set_mode_gyro_ang()?;
 		let initial_angle = self.gyro.get_angle()?;
 		self.turn_until(
 			options,
 			|| {
-				Ok(self.gyro.get_angle()? - initial_angle >= angle as i32)
+				Ok(self.gyro.get_angle()? - initial_angle >= angle)
 			},
 		)
 	}
