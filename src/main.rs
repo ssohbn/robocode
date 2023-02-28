@@ -14,10 +14,9 @@ use std::sync::Arc;
 use std::sync::Mutex;
 
 use uom::si::f32::Length;
-use uom::si::length::{inch, meter};
+use uom::si::length::{inch, meter, centimeter, foot};
 
-#[tokio::main]
-async fn main() -> Ev3Result<()> {
+fn main() -> Ev3Result<()> {
 	let running = Arc::new(AtomicBool::new(true));
 	let r = running.clone();
 	ctrlc::set_handler(move || {
@@ -44,28 +43,14 @@ async fn main() -> Ev3Result<()> {
 		speed: 60,
 	};
 
-	let motor = MediumMotor::find()?;
-	tokio::spawn(async move {
-		for _ in 0..10 {
-			griddy(&motor).unwrap();
-		}
-	});
+    bot.move_distance(&move_options, Length::new::<foot>(1.0))?;
 
-	bot.move_distance(&move_options, Length::new::<inch>(18.0))?;
-	bot.stop_movement()?;
-	Ok(())
-}
+    bot.turn_angle(&robocode::TurnOptions { speed: 20, direction: robocode::Direction::RIGHT}, 90)?;
+    bot.move_distance(&move_options, Length::new::<foot>(1.0))?;
 
-fn griddy(motor: &MediumMotor) -> Ev3Result<()> {
-	motor.set_duty_cycle_sp(100)?;
-	motor.run_direct()?;
+    bot.turn_angle(&robocode::TurnOptions { speed: 20, direction: robocode::Direction::RIGHT}, 90)?;
+    bot.move_distance(&move_options, Length::new::<foot>(1.0))?;
 
-	std::thread::sleep(std::time::Duration::from_millis(100));
-
-	motor.set_duty_cycle_sp(-100)?;
-	motor.run_direct()?;
-
-	std::thread::sleep(std::time::Duration::from_millis(100));
 
 	Ok(())
 }
