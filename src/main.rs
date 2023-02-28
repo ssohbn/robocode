@@ -1,7 +1,6 @@
 extern crate ev3dev_lang_rust;
 
 use ctrlc;
-use tokio;
 
 use ev3dev_lang_rust::motors::{LargeMotor, MediumMotor, MotorPort};
 use ev3dev_lang_rust::sensors::GyroSensor;
@@ -43,13 +42,9 @@ fn main() -> Ev3Result<()> {
 		speed: 60,
 	};
 
-    bot.move_distance(&move_options, Length::new::<foot>(1.0))?;
-
+    bot.move_distance(&move_options, Length::new::<centimeter>(50.0))?;
+    std::thread::sleep(std::time::Duration::from_secs(2));
     bot.turn_angle(&robocode::TurnOptions { speed: 20, direction: robocode::Direction::RIGHT}, 90)?;
-    bot.move_distance(&move_options, Length::new::<foot>(1.0))?;
-
-    bot.turn_angle(&robocode::TurnOptions { speed: 20, direction: robocode::Direction::RIGHT}, 90)?;
-    bot.move_distance(&move_options, Length::new::<foot>(1.0))?;
 
 
 	Ok(())
