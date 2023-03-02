@@ -1,7 +1,7 @@
 extern crate ev3dev_lang_rust;
 
 use ctrlc;
-use ev3dev_lang_rust::motors::{LargeMotor, MotorPort};
+use ev3dev_lang_rust::motors::{LargeMotor, MotorPort, MediumMotor};
 use ev3dev_lang_rust::sensors::{GyroSensor, UltrasonicSensor};
 use ev3dev_lang_rust::sound;
 use ev3dev_lang_rust::Ev3Result;
@@ -36,7 +36,12 @@ fn main() -> Ev3Result<()> {
         forward: false,
         speed: 40,
     };
-    bot.move_distance(&move_options, Length::new::<inch>(18.0))?;
-    bot.stop_movement()?;
+    bot.move_distance(&move_options, Length::new::<inch>(24.0))?;
+    bot.turn_angle(&TurnOptions {speed: 20, direction: robocode::Direction::RIGHT}, 90)?;
+    bot.move_distance(&move_options, Length::new::<inch>(12.0))?;
+    let motor = MediumMotor::get(MotorPort::OutA)?;
+    motor.set_duty_cycle_sp(-40)?;
+    bot.move_distance(&MoveOptions { forward: false, speed: 20 }, Length::new::<inch>(20.0))?;
+
     Ok(())
 }
